@@ -1,0 +1,21 @@
+{
+  "name": "phaser-on-nodejs-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server/index.js"
+  },
+  "keywords": [],
+  "author": "Yannick Deubel (https://github.com/yandeu)",
+  "license": "MIT",
+  "dependencies": {
+    "@geckos.io/phaser-on-nodejs": "^1.2.3",
+    "express": "^4.17.1",
+    "phaser": "3.24.1",
+    "socket.io": "^3.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}

@@ -10,6 +10,7 @@ require('@geckos.io/phaser-on-nodejs')
 const Phaser = require('phaser')
 
 class Dude extends Phaser.Physics.Arcade.Sprite {
+
   constructor(scene, x, y) {
     super(scene, x, y, '')
 
@@ -22,7 +23,11 @@ class Dude extends Phaser.Physics.Arcade.Sprite {
 }
 
 class ServerScene extends Phaser.Scene {
-  players = new Map()
+
+  constructor() {
+    super()
+    this.players = new Map()
+  }
 
   create() {
     this.physics.world.setBounds(0, 0, 1280, 720)

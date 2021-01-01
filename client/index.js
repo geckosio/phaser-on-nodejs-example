@@ -1,10 +1,12 @@
 class MainScene extends Phaser.Scene {
-  dudes = new Map()
-  dudeUpdates = []
-  cursors
 
   constructor() {
     super()
+
+    this.dudes = new Map()
+    this.dudeUpdates = []
+    this.cursors
+
     this.socket = io('http://localhost:3000')
     this.socket.on('connect', () => {
       console.log('id:', this.socket.id)

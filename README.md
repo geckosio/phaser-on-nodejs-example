@@ -4,6 +4,7 @@ Using:
 
 - phaser
 - @geckos.io/phaser-on-nodejs
+- @geckos.io/snapshot-interpolation
 - express
 - socket.io
 

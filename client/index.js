@@ -1,10 +1,11 @@
-class MainScene extends Phaser.Scene {
+const { SnapshotInterpolation } = Snap
+const SI = new SnapshotInterpolation(30) // 30 FPS
 
+class MainScene extends Phaser.Scene {
   constructor() {
     super()
 
     this.dudes = new Map()
-    this.dudeUpdates = []
     this.cursors
 
     this.socket = io('http://localhost:3000')
@@ -23,25 +24,29 @@ class MainScene extends Phaser.Scene {
   create() {
     this.cursors = this.input.keyboard.createCursorKeys()
 
-    this.socket.on('dudes', dudes => {
-      dudes.forEach(dude => {
-        const exists = this.dudes.has(dude.id)
-
-        if (!exists) {
-          const _dude = this.add.sprite(dude.x, dude.y, 'dude')
-          this.dudes.set(dude.id, { dude: _dude })
-        }
-
-        this.dudeUpdates.push(dude)
-      })
+    this.socket.on('snapshot', snapshot => {
+      SI.snapshot.add(snapshot)
     })
   }
 
   update() {
-    this.dudeUpdates.forEach(dude => {
-      const _dude = this.dudes.get(dude.id).dude
-      _dude.setX(dude.x)
-      _dude.setY(dude.y)
+    const snap = SI.calcInterpolation('x y')
+    if (!snap) return
+
+    const { state } = snap
+    if (!state) return
+
+    state.forEach(dude => {
+      const exists = this.dudes.has(dude.id)
+
+      if (!exists) {
+        const _dude = this.add.sprite(dude.x, dude.y, 'dude')
+        this.dudes.set(dude.id, { dude: _dude })
+      } else {
+        const _dude = this.dudes.get(dude.id).dude
+        _dude.setX(dude.x)
+        _dude.setY(dude.y)
+      }
     })
 
     const movement = {

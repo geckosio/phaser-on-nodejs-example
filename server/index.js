@@ -7,10 +7,11 @@ const path = require('path')
 
 // imports for  phaser
 require('@geckos.io/phaser-on-nodejs')
+const { SnapshotInterpolation } = require('@geckos.io/snapshot-interpolation')
+const SI = new SnapshotInterpolation()
 const Phaser = require('phaser')
 
 class Dude extends Phaser.Physics.Arcade.Sprite {
-
   constructor(scene, x, y) {
     super(scene, x, y, '')
 
@@ -23,9 +24,9 @@ class Dude extends Phaser.Physics.Arcade.Sprite {
 }
 
 class ServerScene extends Phaser.Scene {
-
   constructor() {
     super()
+    this.tick = 0
     this.players = new Map()
   }
 
@@ -64,6 +65,11 @@ class ServerScene extends Phaser.Scene {
   }
 
   update() {
+    this.tick++
+
+    // only send the update to the client at 30 FPS (save bandwidth)
+    if (this.tick % 2 !== 0) return
+
     // get an array of all dudes
     const dudes = []
     this.players.forEach(player => {
@@ -71,10 +77,12 @@ class ServerScene extends Phaser.Scene {
       dudes.push({ id: socket.id, x: dude.x, y: dude.y })
     })
 
+    const snapshot = SI.snapshot.create(dudes)
+
     // send all dudes to all players
     this.players.forEach(player => {
       const { socket } = player
-      socket.emit('dudes', dudes)
+      socket.emit('snapshot', snapshot)
     })
   }
 }
